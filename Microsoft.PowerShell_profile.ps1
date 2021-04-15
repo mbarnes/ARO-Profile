@@ -12,3 +12,10 @@ Write-Host -ForegroundColor Green "$(($claims | Where-Object Value -match "^ARO*
 # This is where kubeconfig files land.
 $env:KUBECONFIGDIR="$env:USERPROFILE\Work Folders\Downloads"
 Set-Location "$env:KUBECONFIGDIR"
+
+# Pick up the newest .kubeconfig file in Downloads.
+$kubeconfig=$(Get-ChildItem -Path "$env:KUBECONFIGDIR\*.kubeconfig" | Sort-Object -Property LastWriteTime -Descending | Select-Object -Index 0 | Resolve-Path)
+if ($kubeconfig) {
+    $env:KUBECONFIG=$kubeconfig.ProviderPath
+    Write-Host "Set KUBECONFIG=$($kubeconfig | Split-Path -Leaf)"
+}
