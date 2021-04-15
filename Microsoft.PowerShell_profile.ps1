@@ -8,3 +8,7 @@ Login-GenevaActions -Env Public -RefreshToken
 $claims = Get-Claims
 Write-Host -NoNewline "Roles: "
 Write-Host -ForegroundColor Green "$(($claims | Where-Object Value -match "^ARO*").Value -join ', ')"
+
+# This is where kubeconfig files land.
+$env:KUBECONFIGDIR="$env:USERPROFILE\Work Folders\Downloads"
+Set-Location "$env:KUBECONFIGDIR"
