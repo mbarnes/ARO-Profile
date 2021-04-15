@@ -1,4 +1,4 @@
-Import-Module JITShell
+Import-Module JITShell -DisableNameChecking
 Import-Module GenevaActionsCmdlets
 
 function Start-AROJIT {
