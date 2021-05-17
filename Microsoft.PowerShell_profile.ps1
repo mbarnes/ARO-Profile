@@ -13,8 +13,6 @@ foreach ($name in Get-Alias) {
 New-Alias -force -name kubectl -value \"Program Files"\Kubectl\kubectl
 New-Alias -force -name kc -value kubectl
 
-New-Alias -force -name vim -value \"Program Files (x86)"\vim\vim74\vim
-
 Write-Output "Logging into Geneva Actions..."
 Login-GenevaActions -Env Public -RefreshToken
 $claims = Get-Claims
