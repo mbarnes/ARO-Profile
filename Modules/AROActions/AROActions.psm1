@@ -93,6 +93,12 @@ function Get-AROKubernetesObject {
         This wrappers the "GetKubernetesObjects" Geneva action.
     #>
     param(
+        [ValidateScript(
+            {
+                # Only validate if an Azure context is available.
+                (Get-AzContext) -eq $null -or $_ -in (Get-AROLocation | ForEach-Object {$_.Location})
+            }
+        )]
         [string] $location,
         [string] $resourceId,
         [string] $kubeKind = '',
@@ -126,6 +132,12 @@ function Get-AROAzureResources {
         This wrappers the "ListClusterResources" Geneva action.
     #>
     param(
+        [ValidateScript(
+            {
+                # Only validate if an Azure context is available.
+                (Get-AzContext) -eq $null -or $_ -in (Get-AROLocation | ForEach-Object {$_.Location})
+            }
+        )]
         [string] $location,
         [string] $resourceId
     )
@@ -155,6 +167,12 @@ function Get-AROClusters {
         This wrappers the "ListClusters" Geneva action.
     #>
     param(
+        [ValidateScript(
+            {
+                # Only validate if an Azure context is available.
+                (Get-AzContext) -eq $null -or $_ -in (Get-AROLocation | ForEach-Object {$_.Location})
+            }
+        )]
         [string] $location,
         [string] $jmesPath = ''
     )
@@ -187,6 +205,12 @@ function Get-AROCluster {
         This wrappers the "GetCluster" Geneva action.
     #>
     param(
+        [ValidateScript(
+            {
+                # Only validate if an Azure context is available.
+                (Get-AzContext) -eq $null -or $_ -in (Get-AROLocation | ForEach-Object {$_.Location})
+            }
+        )]
         [string] $location,
         [string] $resourceId,
         [string] $jmesPath = ''
@@ -223,8 +247,15 @@ function PutOrPatch-Cluster {
         This wrappers the "PutOrPatchCluster" Geneva action.
     #>
     param(
+        [ValidateScript(
+            {
+                # Only validate if an Azure context is available.
+                (Get-AzContext) -eq $null -or $_ -in (Get-AROLocation | ForEach-Object {$_.Location})
+            }
+        )]
         [string] $location,
         [string] $resourceId,
+        [ValidateSet("PUT", "PATCH")]
         [string] $httpMethod,
         [string] $clusterObject
     )
@@ -254,6 +285,12 @@ function Upgrade-Cluster {
         This wrappers the "UpgradeCluster" Geneva action.
     #>
     param(
+        [ValidateScript(
+            {
+                # Only validate if an Azure context is available.
+                (Get-AzContext) -eq $null -or $_ -in (Get-AROLocation | ForEach-Object {$_.Location})
+            }
+        )]
         [string] $location,
         [string] $resourceId
     )
