@@ -57,6 +57,15 @@ function Check-Error {
     }
 }
 
+function Get-AROLocation {
+    <#
+    .SYNOPSIS
+        Gets all Azure locations that include a "Microsoft.RedHatOpenShift" provider
+    #>
+    param()
+    Get-AzLocation | Where-Object Providers -contains "Microsoft.RedHatOpenShift"
+}
+
 function Get-AROKubernetesObject {
     <#
     .SYNOPSIS
@@ -289,4 +298,4 @@ function Get-Min {
 }
 
 
-Export-ModuleMember -Function Start-AROJIT, Check-Error, Get-AROKubernetesObject, Get-AROAzureResources, Get-AROClusters, Get-AROCluster, PutOrPatch-Cluster, Upgrade-Cluster, Test-PUCMDone, Get-Min
+Export-ModuleMember -Function Start-AROJIT, Check-Error, Get-AROLocation, Get-AROKubernetesObject, Get-AROAzureResources, Get-AROClusters, Get-AROCluster, PutOrPatch-Cluster, Upgrade-Cluster, Test-PUCMDone, Get-Min
