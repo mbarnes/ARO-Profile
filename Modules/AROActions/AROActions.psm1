@@ -58,6 +58,31 @@ function Check-Error {
 }
 
 function Get-AROKubernetesObject {
+    <#
+    .SYNOPSIS
+        Returns one or more Kubernetes objects from an OpenShift cluster
+
+    .PARAMETER location
+        The Azure location of the OpenShift cluster. (A valid location must include a "Microsoft.RedHatOpenShift" provider.)
+
+    .PARAMETER resourceId
+        The Azure resource ID of the OpenShift cluster.
+
+    .PARAMETER kubeKind
+        The kind of OpenShift object to get (e.g. node, pod, configmap, etc.).
+
+    .PARAMETER kubeNamespace
+        The OpenShift namespace from which to get objects.
+
+    .PARAMETER kubeName
+        The name of the OpenShift object to get.
+
+    .PARAMETER jmesPath
+        The JMESPath query to apply to the JSON output. (See https://jmespath.org for proper syntax.)
+
+    .NOTES
+        This wrappers the "GetKubernetesObjects" Geneva action.
+    #>
     param(
         [string] $location,
         [string] $resourceId,
@@ -78,6 +103,19 @@ function Get-AROKubernetesObject {
 }
 
 function Get-AROAzureResources {
+    <#
+    .SYNOPSIS
+        Returns the Azure resources of an OpenShift cluster
+
+    .PARAMETER location
+        The Azure location of the OpenShift cluster. (A valid location must include a "Microsoft.RedHatOpenShift" provider.)
+
+    .PARAMETER resourceId
+        The Azure resource ID of the OpenShift cluster.
+
+    .NOTES
+        This wrappers the "ListClusterResources" Geneva action.
+    #>
     param(
         [string] $location,
         [string] $resourceId
@@ -94,6 +132,19 @@ function Get-AROAzureResources {
 }
 
 function Get-AROClusters {
+    <#
+    .SYNOPSIS
+        Lists OpenShift clusters in a given Azure location
+
+    .PARAMETER location
+        The Azure location to get OpenShift clusters from. (A valid location must include a "Microsoft.RedHatOpenShift" provider.)
+
+    .PARAMETER jmesPath
+        The JMESPath query to apply to the JSON output. (See https://jmespath.org for proper syntax.)
+
+    .NOTES
+        This wrappers the "ListClusters" Geneva action.
+    #>
     param(
         [string] $location,
         [string] $jmesPath = ''
@@ -110,9 +161,25 @@ function Get-AROClusters {
 }
 
 function Get-AROCluster {
+    <#
+    .SYNOPSIS
+        Returns an OpenShift cluster
+
+    .PARAMETER location
+        The Azure location of the OpenShift cluster. (A valid location must include a "Microsoft.RedHatOpenShift" provider.)
+
+    .PARAMETER resourceId
+        The Azure resource ID of the OpenShift cluster.
+
+    .PARAMETER jmesPath
+        The JMESPath query to apply to the JSON output. (See https://jmespath.org for proper syntax.)
+
+    .NOTES
+        This wrappers the "GetCluster" Geneva action.
+    #>
     param(
         [string] $location,
-		[string] $resourceId,
+        [string] $resourceId,
         [string] $jmesPath = ''
     )
     try {
@@ -127,6 +194,25 @@ function Get-AROCluster {
 }
 
 function PutOrPatch-Cluster {
+    <#
+    .SYNOPSIS
+        Puts or patches an OpenShift cluster
+
+    .PARAMETER location
+        The Azure location of the OpenShift cluster. (A valid location must include a "Microsoft.RedHatOpenShift" provider.)
+
+    .PARAMETER resourceId
+        The Azure resource ID of the OpenShift cluster.
+
+    .PARAMETER httpMethod
+        The HTTP method to invoke (PUT or PATCH).
+
+    .PARAMETER clusterObject
+        The PUT or PATCH method payload, in YAML format.
+
+    .NOTES
+        This wrappers the "PutOrPatchCluster" Geneva action.
+    #>
     param(
         [string] $location,
         [string] $resourceId,
@@ -145,6 +231,19 @@ function PutOrPatch-Cluster {
 }
 
 function Upgrade-Cluster {
+    <#
+    .SYNOPSIS
+        Upgrades an OpenShift cluster
+
+    .PARAMETER location
+        The Azure location of the OpenShift cluster. (A valid location must include a "Microsoft.RedHatOpenShift" provider.)
+
+    .PARAMETER resourceId
+        The Azure resource ID of the OpenShift cluster.
+
+    .NOTES
+        This wrappers the "UpgradeCluster" Geneva action.
+    #>
     param(
         [string] $location,
         [string] $resourceId
