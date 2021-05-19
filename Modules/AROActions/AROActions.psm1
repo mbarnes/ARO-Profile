@@ -168,7 +168,7 @@ function Test-PUCMDone {
         [string] $rpCommit
     )
 
-	if ($cluster.properties.provisionedBy -eq $rpCommit -and $cluster.properties.provisioningState -eq 'Succeeded') {
+	if ($cluster.properties.provisionedBy -eq $rpCommit -and ($cluster.properties.provisioningState -eq 'Succeeded' -or ($cluster.properties.provisioningState -eq 'Failed' -and $cluster.properties.failedProvisioningState -eq 'Updating'))) {
 		return $true
 	} else {
 		return $false
