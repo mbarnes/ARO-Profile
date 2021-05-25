@@ -305,6 +305,63 @@ function Upgrade-Cluster {
     $gares
 }
 
+function Ensure-AROClusterParameters {
+    <#
+    .SYNOPSIS
+        Tries to infer missing -location and -resourceId parameters
+
+    .PARAMETER location
+        The value of another -location parameter, which may be an empty string.
+
+    .PARAMETER resourceId
+        The value of another -resourceId parameter, which may be an empty string.
+
+    .DESCRIPTION
+        If either the "location" or "resourceId" parameters are empty strings,
+        attempt to infer their values if the following conditions are met:
+
+        1. The "kubectl" package must be installed.
+        2. The KUBECONFIG environment variable must be set.
+        3. The value of KUBECONFIG must be the path of an existing file.
+
+        If these conditions are met then "kubectl.exe" is invoked to obtain
+        the cluster's "cluster" object, from which the location and resource ID
+        can be extracted.
+
+        If any of these conditions are not met, then an exception is thrown.
+
+        If successful, or if both parameters were non-empty strings to begin with,
+        return both "location" and "resourceId" strings.
+    #>
+    param(
+        [string] $location = "",
+        [string] $resourceId = ""
+    )
+
+    if ($location -eq "" -or $resourceId -eq "") {
+        if (Test-Path -Path C:\"Program Files"\Kubectl\kubectl.exe -PathType Leaf) {
+            if ((Test-Path -Path env:KUBECONFIG) -and (Test-Path -Path $env:KUBECONFIG -PathType Leaf)) {
+                $cluster = (C:\"Program Files"\Kubectl\kubectl.exe get cluster cluster --output=json | ConvertFrom-Json)
+                Write-Host -NoNewLine "Infering cluster from env:KUBECONFIG ("
+                Write-Host -NoNewLine -ForegroundColor Green ($env:KUBECONFIG | Split-Path -Leaf)
+                Write-Host ")"
+                if ($location -eq "") {
+                    $location = ($cluster).Spec.Location
+                }
+                if ($resourceId -eq "") {
+                    $resourceId = ($cluster).Spec.ResourceId
+                }
+                return $location, $resourceId
+            }
+        }
+        throw "Both -location and -resourceId parameters are required unless "`
+            + "the Kubectl package is installed and env:KUBECONFIG is set to "`
+            + "the path of a usable .kubeconfig file"
+    }
+
+    return $location, $resourceId
+}
+
 # Returns true if the last PUCM was successful and the RP version matches
 # Used by both PUCM and Cluster Upgrade scripts
 function Test-PUCMDone {
@@ -334,5 +391,4 @@ function Get-Min {
     }
 }
 
-
-Export-ModuleMember -Function Start-AROJIT, Check-Error, Get-AROLocation, Get-AROKubernetesObject, Get-AROAzureResources, Get-AROClusters, Get-AROCluster, PutOrPatch-Cluster, Upgrade-Cluster, Test-PUCMDone, Get-Min
+Export-ModuleMember -Function Start-AROJIT, Check-Error, Get-AROLocation, Get-AROKubernetesObject, Get-AROAzureResources, Get-AROClusters, Get-AROCluster, PutOrPatch-Cluster, Upgrade-Cluster, Test-PUCMDone, Get-Min, Ensure-AROClusterParameters
