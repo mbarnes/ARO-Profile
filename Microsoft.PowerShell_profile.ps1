@@ -13,6 +13,15 @@ foreach ($name in Get-Alias) {
 New-Alias -force -name kubectl -value \"Program Files"\Kubectl\kubectl
 New-Alias -force -name kc -value kubectl
 
+try {
+    if ((Get-AzContext) -eq $null) {
+        Write-Host "Connecting to Azure..."
+        Connect-AzAccount 3>$null  # Suppress warning stream
+    }
+} catch [System.Management.Automation.CommandNotFoundException] {
+    Write-Host -ForegroundColor Yellow "Az.Accounts cmdlets not found. Consider installing Azure PowerShell package."
+}
+
 Write-Output "Logging into Geneva Actions..."
 Login-GenevaActions -Env Public -RefreshToken
 $claims = Get-Claims
