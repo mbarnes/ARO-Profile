@@ -1,3 +1,14 @@
+function global:prompt {
+    # Standard PowerShell prompt, but also shows when env:KUBECONFIG is set.
+    Write-Host -NoNewline "PS "
+    if (Test-Path -Path "env:KUBECONFIG") {
+        $segment = "[" + $($env:KUBECONFIG | Split-Path -Leaf) + "] "
+        Write-Host -NoNewline -ForegroundColor Yellow $segment
+    }
+    Write-Host -NoNewline $ExecutionContext.SessionState.Path.CurrentLocation
+    return "$('>' * ($NestedPromptLevel + 1)) "
+}
+
 # Add standard POSIX commands to PATH (from Git package).
 $env:PATH="C:\Program Files\Git\usr\bin;$env:PATH"
 
@@ -50,5 +61,4 @@ Set-Location "$env:KUBECONFIGDIR"
 $kubeconfig=$(Get-ChildItem -Path "$env:KUBECONFIGDIR\*.kubeconfig" | Sort-Object -Property LastWriteTime -Descending | Select-Object -Index 0 | Resolve-Path)
 if ($kubeconfig) {
     $env:KUBECONFIG=$kubeconfig.ProviderPath
-    Write-Host "Set KUBECONFIG=$($kubeconfig | Split-Path -Leaf)"
 }
