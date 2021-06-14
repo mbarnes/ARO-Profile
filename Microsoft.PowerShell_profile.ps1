@@ -9,6 +9,12 @@ function global:prompt {
     return "$('>' * ($NestedPromptLevel + 1)) "
 }
 
+# Override HOME to be "Work Folders"
+$HOMEDRIVE = "C:\"
+$HOMEPATH = "Users\" + $env:USERNAME + "\Work Folders"
+Set-Variable HOME "$HOMEDRIVE$HOMEPATH" -Force
+Set-Location $HOME
+
 # Add standard POSIX commands to PATH (from Git package).
 $env:PATH="C:\Program Files\Git\usr\bin;$env:PATH"
 
@@ -55,7 +61,6 @@ foreach ($job in $jobs) {
 
 # This is where kubeconfig files land.
 $env:KUBECONFIGDIR="$env:USERPROFILE\Work Folders\Downloads"
-Set-Location "$env:KUBECONFIGDIR"
 
 # Pick up the newest .kubeconfig file in Downloads.
 $kubeconfig=$(Get-ChildItem -Path "$env:KUBECONFIGDIR\*.kubeconfig" | Sort-Object -Property LastWriteTime -Descending | Select-Object -Index 0 | Resolve-Path)
