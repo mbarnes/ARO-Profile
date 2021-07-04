@@ -62,6 +62,9 @@ foreach ($job in $jobs) {
 # This is where kubeconfig files land.
 $env:KUBECONFIGDIR="$env:USERPROFILE\Work Folders\Downloads"
 
+# Delete expired .kubeconfig files in Downloads (older than 6 hours).
+Get-ChildItem -Path "$env:KUBECONFIGDIR\*.kubeconfig" | Where-Object {$_.LastWriteTime -lt (Get-Date).AddHours(-6)} | Remove-Item
+
 # Pick up the newest .kubeconfig file in Downloads.
 $kubeconfig=$(Get-ChildItem -Path "$env:KUBECONFIGDIR\*.kubeconfig" | Sort-Object -Property LastWriteTime -Descending | Select-Object -Index 0 | Resolve-Path)
 if ($kubeconfig) {
