@@ -107,6 +107,7 @@ function Get-AROKubernetesObject {
         [string] $jmesPath = ''
     )
     try {
+        $location = $location.ToLower()  # Endpoint param is case-sensitive
         $gares = Invoke-GenevaActionsOperation -Extension 'Azure Red Hat OpenShift (ARO)' -Operation GetKubernetesObjects -Endpoint $location -_smeresourceid $resourceId -_smekubekind $kubeKind -_smekubenamespace $kubeNamespace -_smekubename $kubeName -_smejmespath $jmesPath -_smejsonmode true
     }
     catch {
@@ -142,6 +143,7 @@ function Get-AROAzureResources {
         [string] $resourceId
     )
     try {
+        $location = $location.ToLower()  # Endpoint param is case-sensitive
         $gares = Invoke-GenevaActionsOperation -Extension 'Azure Red Hat OpenShift (ARO)' -Operation ListClusterResources -Endpoint $location -_smeresourceid $resourceId -_smejsonmode true
     }
     catch {
@@ -177,6 +179,7 @@ function Get-AROClusters {
         [string] $jmesPath = ''
     )
     try {
+        $location = $location.ToLower()  # Endpoint param is case-sensitive
         $gares = Invoke-GenevaActionsOperation -Extension 'Azure Red Hat OpenShift (ARO)' -Operation ListClusters -Endpoint $location -_smejmespath $jmesPath -_smejsonmode true
     }
     catch {
@@ -216,6 +219,7 @@ function Get-AROCluster {
         [string] $jmesPath = ''
     )
     try {
+        $location = $location.ToLower()  # Endpoint param is case-sensitive
         $gares = Invoke-GenevaActionsOperation -Extension 'Azure Red Hat OpenShift (ARO)' -Operation GetCluster -Endpoint $location -_smeresourceid $resourceId -_smejsonmode true
     }
     catch {
@@ -260,6 +264,7 @@ function PutOrPatch-Cluster {
         [string] $clusterObject
     )
     try {
+        $location = $location.ToLower()  # Endpoint param is case-sensitive
         $gares = Invoke-GenevaActionsOperation -Extension 'Azure Red Hat OpenShift (ARO)' -Operation PutOrPatchCluster -Endpoint $location -_smeresourceid $resourceId -_smehttpmethod $httpMethod -_smeclusterobject $clusterObject -_smejsonmode true
     }
     catch {
