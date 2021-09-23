@@ -118,6 +118,46 @@ function Get-AROKubernetesObject {
     $gares
 }
 
+function CreateOrUpdate-AROKubernetesObject {
+    <#
+    .SYNOPSIS
+        Creates or updates a Kubernetes object on a cluster (equivalent of oc create -f -)
+
+    .PARAMETER location
+        The Azure location of the OpenShift cluster. (A valid location must include a "Microsoft.RedHatOpenShift" provider.)
+
+    .PARAMETER resourceId
+        The Azure resource ID of the OpenShift cluster.
+
+    .PARAMETER kubeObject
+        The JSON specification of a Kubernetes Object to create/update
+
+    .NOTES
+        This wrappers the "GetKubernetesObjects" Geneva action.
+    #>
+    param(
+        [ValidateScript(
+            {
+                # Only validate if an Azure context is available.
+                (Get-AzContext) -eq $null -or $_ -in (Get-AROLocation | ForEach-Object {$_.Location})
+            }
+        )]
+        [string] $location,
+        [string] $resourceId,
+        [string] $kubeObject
+    )
+    try {
+        $location = $location.ToLower()  # Endpoint param is case-sensitive
+        $gares = Invoke-GenevaActionsOperation -Extension 'Azure Red Hat OpenShift (ARO)' -Operation CreateOrUpdateKubernetesObject -Endpoint $location -_smeresourceid $resourceId -_smekubeobject $kubeObject -_smejsonmode true -Confirm -Force
+    }
+    catch {
+        Write-Warning 'Exception when invoking Geneva Action'
+        Write-Output $PSItem
+        exit
+    }
+    $gares
+}
+
 function Get-AROAzureResources {
     <#
     .SYNOPSIS
@@ -230,6 +270,46 @@ function Get-AROCluster {
     $gares
 }
 
+function Get-AROSerialConsole {
+    <#
+    .SYNOPSIS
+        Returns a Base64-encoded serial console log from a virtual machine in an OpenShift cluster
+
+    .PARAMETER location
+        The Azure location of the OpenShift cluster.  (A valid location must include a "Microsoft.RedHatOpenShift" provider.)
+
+    .PARAMETER resourceId
+        The Azure resource ID of the OpenShift cluster.
+
+    .PARAMETER vmName
+        The name of a virtual machine within the OpenShift cluster.
+
+    .NOTES
+        This wrappers the "SerialConsole" Geneva action.
+    #>
+    param(
+        [ValidateScript(
+            {
+                # Only validate if an Azure context is available.
+                (Get-AzContext) -eq $null -or $_ -in (Get-AROLocation | ForEach-Object {$_.Location})
+            }
+        )]
+        [string] $location,
+        [string] $resourceId,
+        [string] $vmName
+    )
+    try {
+        $location = $location.ToLower()  # Endpoint param is case-sensitive
+        $gares = Invoke-GenevaActionsOperation -Extension 'Azure Red Hat OpenShift (ARO)' -Operation SerialConsole -Endpoint $location -_smeresourceid $resourceId -_smevmname $vmName
+    }
+    catch {
+        Write-Warning 'Exception when invoking Geneva Action'
+        Write-Output $PSItem
+        exit
+    }
+    $gares
+}
+
 function PutOrPatch-Cluster {
     <#
     .SYNOPSIS
@@ -300,7 +380,8 @@ function Upgrade-Cluster {
         [string] $resourceId
     )
     try {
-        $gares = Invoke-GenevaActionsOperation -Extension 'Azure Red Hat OpenShift (ARO)' -Operation UpgradeCluster -Endpoint $location -_smeresourceid $resourceId -_smeclusterobject '{}' -_smeupgradey false -_smejsonmode true
+        $location = $location.ToLower()  # Endpoint param is case-sensitive
+        $gares = Invoke-GenevaActionsOperation -Extension 'Azure Red Hat OpenShift (ARO)' -Operation UpgradeCluster -Endpoint $location -_smeresourceid $resourceId -_smeupgradey false -_smejsonmode true
     }
     catch {
         Write-Warning 'Exception when invoking Geneva Action'
@@ -347,14 +428,16 @@ function Ensure-AROClusterParameters {
         if (Test-Path -Path C:\"Program Files"\Kubectl\kubectl.exe -PathType Leaf) {
             if ((Test-Path -Path env:KUBECONFIG) -and (Test-Path -Path $env:KUBECONFIG -PathType Leaf)) {
                 $cluster = (C:\"Program Files"\Kubectl\kubectl.exe get cluster cluster --output=json | ConvertFrom-Json)
-                Write-Host -NoNewLine "Infering cluster from env:KUBECONFIG ("
+                Write-Host -NoNewLine "Inferring cluster from env:KUBECONFIG ("
                 Write-Host -NoNewLine -ForegroundColor Green ($env:KUBECONFIG | Split-Path -Leaf)
                 Write-Host ")"
                 if ($location -eq "") {
                     $location = ($cluster).Spec.Location
+                    Write-Host "Cluster location:    $location"
                 }
                 if ($resourceId -eq "") {
                     $resourceId = ($cluster).Spec.ResourceId
+                    Write-Host "Cluster resource ID: $resourceId"
                 }
                 return $location, $resourceId
             }
@@ -396,4 +479,4 @@ function Get-Min {
     }
 }
 
-Export-ModuleMember -Function Start-AROJIT, Check-Error, Get-AROLocation, Get-AROKubernetesObject, Get-AROAzureResources, Get-AROClusters, Get-AROCluster, PutOrPatch-Cluster, Upgrade-Cluster, Test-PUCMDone, Get-Min, Ensure-AROClusterParameters
+Export-ModuleMember -Function Start-AROJIT, Check-Error, Get-AROKubernetesObject, Get-AROAzureResources, Get-AROClusters, Get-AROCluster, Get-AROSerialConsole, PutOrPatch-Cluster, Upgrade-Cluster, Test-PUCMDone, Get-Min, Ensure-AROClusterParameters, CreateOrUpdate-AROKubernetesObject
