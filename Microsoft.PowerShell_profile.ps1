@@ -13,7 +13,7 @@ function global:prompt {
 $HOMEDRIVE = "C:\"
 $HOMEPATH = "Users\" + $env:USERNAME + "\Work Folders"
 Set-Variable HOME "$HOMEDRIVE$HOMEPATH" -Force
-Set-Location $HOME
+Set-Location "$HOME\git\ARO-Scripts\powerShellActions"
 
 # Add standard POSIX commands to PATH (from Git package).
 $env:PATH="C:\Program Files\Git\usr\bin;$env:PATH"
